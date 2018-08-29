@@ -56,18 +56,10 @@ class ScoreboardStore{
 	}
 
 	public function entryExist(string $objectiveName, int $line) : bool{
-		if(isset($this->entries[$objectiveName][$line])){
-			return true;
-		}else{
-			return false;
-		}
+		return isset($this->entries[$objectiveName][$line]);
 	}
 
 	public function getId(string $displayName){
-		if(isset($this->scoreboards[$displayName])){
-			return $this->scoreboards[$displayName];
-		}else{
-			return null;
-		}
+		return $this->scoreboards[$displayName] ?? null;
 	}
 }
