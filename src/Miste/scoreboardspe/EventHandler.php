@@ -9,7 +9,7 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerChatEvent;
 
 use Miste\scoreboardspe\API\{
-	Scoreboard, ScoreboardDisplaySlot, ScoreboardSort
+	Scoreboard, ScoreboardAction, ScoreboardDisplaySlot, ScoreboardSort
 };
 
 class EventHandler implements Listener{
@@ -22,13 +22,12 @@ class EventHandler implements Listener{
 	}
 
 	public function onPlayerJoinEvent(PlayerJoinEvent $event){
-		$scoreboard = new Scoreboard($this->plugin, "Miste");
-		$scoreboard->addDisplay($event->getPlayer(), ScoreboardDisplaySlot::SIDEBAR, ScoreboardSort::DESCENDING);
+		$scoreboard = new Scoreboard($this->plugin, "Miste", ScoreboardAction::CREATE);
+		$scoreboard->create(ScoreboardDisplaySlot::SIDEBAR, ScoreboardSort::DESCENDING);
 
-		$scoreboard->setLine($event->getPlayer(), 1, "line1");
-		$scoreboard->setLine($event->getPlayer(), 2, "line2");
-		$scoreboard->setLine($event->getPlayer(), 4, "line4");
-		$scoreboard->setLine($event->getPlayer(), 7, "line7");
-		$scoreboard->setLine($event->getPlayer(), 9, "line9");
+		$scoreboard->addDisplay($event->getPlayer());
+		for($i = 1; $i <= 15; $i++){
+			$scoreboard->setLine($event->getPlayer(), $i, "line$i");
+		}
 	}
 }

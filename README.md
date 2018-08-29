@@ -2,12 +2,12 @@
 
 A PocketMine-MP plugin that let you easily send scoreboards by using command on server who comes with a rich API for developers.
 
-**NB**: As scoreboards are going to be added in 1.7, this plugin only works with 1.7.0.2 beta.
+**NB**: As scoreboards are going to be added in 1.7, this plugin only works with 1.7.0.2&1.7.0.3 beta.
 ### Commands
 
 The command to use the soreboards is ``scoreboard``, his aliases are ``sc`` and ``score``.
 
-* /scoreboard add < player / @all > < scoreboard name > < displaySlot (sidebar/list/belowname) > < sortOrder (0->ascending/1->descending) >
+* /scoreboard create < Name of the scoreboard > < displaySlot (sidebar/list/belowname) > < sortOrder (0->ascending/1->descending) >
 
   - **DisplaySlot**  
   It's where the scoreboard is displayed on your screen
@@ -19,18 +19,22 @@ The command to use the soreboards is ``scoreboard``, his aliases are ``sc`` and 
     - 0: The score is from the smallest to the biggest
     - 1: The score is from the biggest to the smallest
     
-It adds the scoreboard to the player.  
-For exemple ``/scoreboard add Misteboss1 Miste sidebar 1
+It creates the scoreboard and save it.  
+
+* /scoreboard add < player / @all > < title >
+
+It sends the scoreboard display.  
+For exemple: ``/scoreboard add @all Miste
 `` display that:
 
 <img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple1.png" width="100">
 
-* /scoreboard addLine < player / @all > < Name of the scoreboard > < line > < message >
+* /scoreboard setLine < player / @all > < Name of the scoreboard > < line > < message >
 
 It adds the line you want with the text you want to the scoreboard.  
-The player to which you are sending this addLine have to have received the scoreboard first.  
+The player to which you are sending this setLine have to have received the scoreboard first.  
 **NB**: You can't add two lines with the same message. If you don't have any lines to your scoreboard and you add the line 4 it will add 3 empty lines too.  
-For exemple ``/scoreboard addLine Misteboss1 Miste 1 My name is Miste
+For exemple: ``/scoreboard setLine Misteboss1 Miste 1 My name is Miste
 `` display that:
 
 <img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple2.png" width="200">  
@@ -38,7 +42,7 @@ For exemple ``/scoreboard addLine Misteboss1 Miste 1 My name is Miste
 * /scoreboard rmLine < player / @all > < Name of the scoreboard > < line >
 
 It removes the line you want of the scoreboard.  
-For exemple ``/scoreboard rmLine Misteboss1 Miste 1
+For exemple: ``/scoreboard rmLine Misteboss1 Miste 
 `` display that:
 
 <img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple1.png" width="100">
@@ -46,12 +50,22 @@ For exemple ``/scoreboard rmLine Misteboss1 Miste 1
 * /scoreboard remove < player / @all > < Name of the scoreboard >
 
 It removes the scoreboard from the player.  
-For exemple ``/scoreboard rmLine Misteboss1 Miste 1`` will remove the scoreboard.
+For exemple: ``/scoreboard remove @all Miste`` will remove the scoreboard from all the online players.  
+
+* /scoreboard delete < Name of the scoreboard >
+
+It removes the scoreboard from the database, that means that you wouldn't be able to use it in the future.  
+**NB**: Please note that this command doesn't remove the scoreboard from it's viewers  
+Exemple: ``/scoreboard delete Miste`` will remove the scoreboard.
+
+* /scoreboard help
+
+It gives you the list of available commands and how to use them.
 
 ### API
 ```
 use Miste\scoreboardspe\API\{
-	Scoreboard, ScoreboardDisplaySlot, ScoreboardSort
+	Scoreboard, ScoreboardDisplaySlot, ScoreboardSort, ScoreboardAction
 };
 
 /*
@@ -59,14 +73,15 @@ use Miste\scoreboardspe\API\{
     The id is created and saved linked with the display name internally
 */    
 
-$scoreboard = new Scoreboard($this->getServer()->getPluginManager()->getPlugin("ScoreboardsPE)->getPlugin(), "Miste");
+$scoreboard = new Scoreboard($this->getServer()->getPluginManager()->getPlugin("ScoreboardsPE)->getPlugin(), "Miste", ScoreboardAction::CREATE);
+$scoreboard->create(ScoreboardDisplaySlot::SIDEBAR, ScoreboardSort::DESCENDING);
 
 /*
-    If you want to reget the Scoreboard instance of one of your scoreboard do as you were creating on and add the bool false
+    If you want to get back the Scoreboard instance of one of your scoreboard do as you were creating on and add the ScoreboardAction::MODIFY at the end of the constructor.
     Here you will get back the instance of the scoreboard we created above
 */
 
-$scoreboard = new Scoreboard($this->getServer()->getPluginManager()->getPlugin("ScoreboardsPE)->getPlugin(), "Miste", false);
+$scoreboard = new Scoreboard($this->getServer()->getPluginManager()->getPlugin("ScoreboardsPE)->getPlugin(), "Miste", ScoreboardAction::MODIFY);
 
 /*
     Send the scoreboard to the player (without any lines)
@@ -77,7 +92,7 @@ $scoreboard->addDisplay($player, ScoreboardDisplaySlot::SIDEBAR, ScoreboardSort:
 /*
     Add lines to the scoreboard O
     If you send line 1 then line 4 the plugin will automatically send two empty lines between.
- 
+    The max number of lines is 15, send more than 15 can bring issues when removing some
 */
 
 $scoreboard->setLine($player, 1, "line1");
@@ -98,5 +113,10 @@ $scoreboard->removeLine($player, 2);
 
 $scoreboard->removeDisplay($player);
 
+/*
+    Delete the scoreboard from the database (in order to save RAM)
+*/
+
+$scoreboard->delete();
 
 ```

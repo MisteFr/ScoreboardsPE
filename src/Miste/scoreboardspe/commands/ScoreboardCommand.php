@@ -6,7 +6,7 @@ use pocketmine\command\{
 	Command, CommandSender, PluginIdentifiableCommand
 };
 use Miste\scoreboardspe\API\{
-	Scoreboard, ScoreboardDisplaySlot, ScoreboardSort
+	Scoreboard, ScoreboardAction, ScoreboardDisplaySlot, ScoreboardSort
 };
 use Miste\scoreboardspe\ScoreboardsPE;
 use pocketmine\Player;
@@ -23,8 +23,8 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 		parent::__construct($name, "Send a scoreboard with a command !", "/scoreboard add <player / @all> <title> <displaySlot (sidebar/list/belowname> <sortOrder (0->ascending/1->descending)>", ["sc", "score"]);
 		$this->plugin = $plugin;
 		$this->setPermission("scoreboard.cmd");
-		$this->setDescription("Send a scoreboard with a command ! (/sc add/remove/addLine/rmLine)");
-		$this->setUsage("/scoreboard add <player / @all> <title> <displaySlot (sidebar/list/belowname> <sortOrder (0->ascending/1->descending)>");
+		$this->setDescription("Send a scoreboard with a command ! (/sc help/create/delete/add/remove/setLine/rmLine)");
+		$this->setUsage("/scoreboard help/create/delete/add/remove/setLine/rmLine");
 	}
 
 	public function getPlugin() : Plugin{
@@ -33,119 +33,178 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 
 	public function execute(CommandSender $sender, $commandLabel, array $args){
 		if($sender instanceof Player){
-			switch($args[0]){
+			if(count($args) > 0){
+				switch($args[0]){
 
-				case "add":
-					if(!(count($args) < 5)){
-						if(is_numeric($args[4])){
-							$scoreboard = new Scoreboard($this->plugin, $args[2]);
-							if($args[1] === "@all"){
-								foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
-									$scoreboard->addDisplay($p, strtolower($args[3]), (int) $args[4]);
+					case "create":
+						if(!(count($args) < 4)){
+							if($this->plugin->getStore()->getId($args[1]) === null){
+								if(is_numeric($args[3])){
+									$scoreboard = new Scoreboard($this->plugin, $args[1], ScoreboardAction::CREATE);
+									$scoreboard->create($args[2], $args[3]);
+									$sender->sendMessage("§aSuccessfully created scoreboard " . $args[1] . " ! You can now add it to by using /sc add.");
+								}else{
+									$sender->sendMessage("§cThe sort order need to be 0/1.");
 								}
 							}else{
-								$p = $this->plugin->getServer()->getPlayer($args[1]);
-								if($p !== null){
-									$scoreboard->addDisplay($p, strtolower($args[3]), (int) $args[4]);
-								}else{
-									$sender->sendMessage("§cThis player isn't online.");
-								}
+								$sender->sendMessage("§cThis scoreboard already exist, you can add it to a player using /scoreboard add");
 							}
 						}else{
-							$sender->sendMessage("§cThe sort order need to be 0/1.");
+							$sender->sendMessage("§e/scoreboard create <title> <displaySlot (sidebar/list/belowname)> <sortOrder (0->ascending/1->descending)>");
 						}
-					}else{
-						$sender->sendMessage("§e/scoreboard add <player / @all> <title> <displaySlot (sidebar/list/belowname)> <sortOrder (0->ascending/1->descending)>");
-					}
-					break;
+						break;
 
-				case "addLine":
-					if(!(count($args) < 5)){
-						if($this->plugin->getStore()->getId($args[2]) !== null){
-							if(is_numeric($args[3])){
-								if((int) $args[3] >= 1 && (int) $args[3] <= 9){
-									$scoreboard = new Scoreboard($this->plugin, $args[2], false);
-									if($args[1] === "@all"){
-										foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
-											$scoreboard->setLine($p, (int) $args[3], implode(" ", array_slice($args, 4)));
+					case "delete":
+
+						if(!(count($args) < 2)){
+							if($this->plugin->getStore()->getId($args[1]) !== null){
+								$scoreboard = new Scoreboard($this->plugin, $args[1], ScoreboardAction::MODIFY);
+								$scoreboard->delete();
+								$sender->sendMessage("§aSuccessfully deleted scoreboard " . $args[1] . ".");
+							}else{
+								$sender->sendMessage("§cThere is no scoreboard with that name.");
+							}
+						}else{
+							$sender->sendMessage("§e/scoreboard delete <title>");
+						}
+
+
+						break;
+
+					case "add":
+						if(!(count($args) < 3)){
+							if($this->plugin->getStore()->getId($args[2]) !== null){
+								$scoreboard = new Scoreboard($this->plugin, $args[2], ScoreboardAction::MODIFY);
+								if($args[1] === "@all"){
+									foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
+										$scoreboard->addDisplay($p);
+									}
+									$sender->sendMessage("§aSent " . $args[2] . " to all the online players.");
+								}else{
+									$p = $this->plugin->getServer()->getPlayer($args[1]);
+									if($p !== null){
+										$scoreboard->addDisplay($p);
+										$sender->sendMessage("§aSent " . $args[2] . " scoreboard to  " . $p->getName());
+									}else{
+										$sender->sendMessage("§cThis player isn't online.");
+									}
+								}
+							}else{
+								$sender->sendMessage("§cThere is no scoreboard with that name.");
+							}
+						}else{
+							$sender->sendMessage("§e/scoreboard add <player / @all> <title>");
+						}
+						break;
+
+					case "setLine":
+						if(!(count($args) < 5)){
+							if($this->plugin->getStore()->getId($args[2]) !== null){
+								if(is_numeric($args[3])){
+									if((int) $args[3] >= 1 && (int) $args[3] <= 15){
+										$scoreboard = new Scoreboard($this->plugin, $args[2], ScoreboardAction::MODIFY);
+										if($args[1] === "@all"){
+											foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
+												$scoreboard->setLine($p, (int) $args[3], implode(" ", array_slice($args, 4)));
+											}
+											$sender->sendMessage("§aSent line number " . $args[3] . " of scoreboard " . $args[2] . " to all the online players.");
+										}else{
+											$p = $this->plugin->getServer()->getPlayer($args[1]);
+											if($p !== null){
+												$scoreboard->setLine($p, (int) $args[3], implode(" ", array_slice($args, 4)));
+												$sender->sendMessage("§aSent line number " . $args[3] . " of scoreboard " . $args[2] . " to " .  $p->getName());
+											}else{
+												$sender->sendMessage("§cThis player isn't online.");
+											}
 										}
 									}else{
-										$p = $this->plugin->getServer()->getPlayer($args[1]);
-										if($p !== null){
-											$scoreboard->setLine($p, (int) $args[3], implode(" ", array_slice($args, 4)));
-										}else{
-											$sender->sendMessage("§cThis player isn't online.");
-										}
+										$sender->sendMessage("§cThe line number should be a number between 1 and 9.");
 									}
 								}else{
-									$sender->sendMessage("§cThe line number should be a number between 1 and 9.");
+									$sender->sendMessage("§cThe line number should be a number.");
 								}
 							}else{
-								$sender->sendMessage("§cThe line number should be a number.");
+								$sender->sendMessage("§cThere is no scoreboard with that name.");
 							}
 						}else{
-							$sender->sendMessage("§cThere is no scoreboard with that name.");
+							$sender->sendMessage("§e/scoreboard setLine <player / @all> <title of the scoreboard> <line> <message>");
 						}
-					}else{
-						$sender->sendMessage("§e/scoreboard addLine <player / @all> <title of the scoreboard> <line> <message>");
-					}
-					break;
+						break;
 
-				case "rmLine":
-					if(!(count($args) < 4)){
-						if($this->plugin->getStore()->getId($args[2]) !== null){
-							if(is_numeric($args[3])){
-								if((int) $args[3] >= 1 && (int) $args[3] <= 9){
-									$scoreboard = new Scoreboard($this->plugin, $args[2], false);
-									if($args[1] === "@all"){
-										foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
-											$scoreboard->removeLine($p, (int) $args[3]);
+					case "rmLine":
+						if(!(count($args) < 4)){
+							if($this->plugin->getStore()->getId($args[2]) !== null){
+								if(is_numeric($args[3])){
+									if((int) $args[3] >= 1 && (int) $args[3] <= 15){
+										if($this->plugin->getStore()->entryExist($this->plugin->getStore()->getId($args[2]), $args[3])){
+											$scoreboard = new Scoreboard($this->plugin, $args[2], ScoreboardAction::MODIFY);
+											if($args[1] === "@all"){
+												foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
+													$scoreboard->removeLine($p, $args[3]);
+												}
+												$sender->sendMessage("§aRemoved line number " . $args[3] . " of scoreboard " . $args[2] . " for all the online players.");
+											}else{
+												$p = $this->plugin->getServer()->getPlayer($args[1]);
+												if($p !== null){
+													$scoreboard->removeLine($p, $args[3]);
+													$sender->sendMessage("§aRemoved line number " . $args[3] . " of the scoreboard " . $args[2] . " for " .  $p->getName());
+												}else{
+													$sender->sendMessage("§cThis player isn't online.");
+												}
+											}
+										}else{
+											$sender->sendMessage("§cThis scoreboard doesn't have line number " . $args[3] . ".");
 										}
 									}else{
-										$p = $this->plugin->getServer()->getPlayer($args[1]);
-										if($p !== null){
-											$scoreboard->removeLine($p, $args[3]);
-										}else{
-											$sender->sendMessage("§cThis player isn't online.");
-										}
+										$sender->sendMessage("§cThe line number should be a number between 1 and 9.");
 									}
 								}else{
-									$sender->sendMessage("§cThe line number should be a number between 1 and 9.");
+									$sender->sendMessage("§cThe line number should be a number.");
 								}
 							}else{
-								$sender->sendMessage("§cThe line number should be a number.");
+								$sender->sendMessage("§cThere is no scoreboard with that name.");
 							}
 						}else{
-							$sender->sendMessage("§cThere is no scoreboard with that name.");
+							$sender->sendMessage("§e/scoreboard rmLine <player / @all> <title of the scoreboard> <line>");
 						}
-					}else{
-						$sender->sendMessage("§e/scoreboard rmLine <player / @all> <title of the scoreboard> <line>");
-					}
-					break;
+						break;
 
-				case "remove":
-					if(!(count($args) < 3)){
-						if($this->plugin->getStore()->getId($args[2]) !== null){
-							$scoreboard = new Scoreboard($this->plugin, $args[2], false);
-							if($args[1] === "@all"){
-								foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
-									$scoreboard->removeDisplay($p);
+					case "remove":
+						if(!(count($args) < 3)){
+							if($this->plugin->getStore()->getId($args[2]) !== null){
+								$scoreboard = new Scoreboard($this->plugin, $args[2], ScoreboardAction::MODIFY);
+								if($args[1] === "@all"){
+									foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
+										$scoreboard->removeDisplay($p);
+									}
+									$sender->sendMessage("§aRemoved the display of the scoreboard " . $args[2] . " for all the online players");
+								}else{
+									$p = $this->plugin->getServer()->getPlayer($args[1]);
+									if($p !== null){
+										$scoreboard->removeDisplay($p);
+										$sender->sendMessage("§aRemoved the display of the scoreboard " . $args[2] . " for " . $p->getName());
+									}else{
+										$sender->sendMessage("§cThis player isn't online.");
+									}
 								}
 							}else{
-								$p = $this->plugin->getServer()->getPlayer($args[1]);
-								if($p !== null){
-									$scoreboard->removeDisplay($p);
-								}else{
-									$sender->sendMessage("§cThis player isn't online.");
-								}
+								$sender->sendMessage("§cThere is no scoreboard with that name.");
 							}
 						}else{
-							$sender->sendMessage("§cThere is no scoreboard with that name.");
+							$sender->sendMessage("§e/scoreboard remove <player / @all> <title of the scoreboard>");
 						}
-					}else{
-						$sender->sendMessage("§e/scoreboard remove <player / @all> <title of the scoreboard>");
-					}
-					break;
+						break;
+
+					case "help":
+						$sender->sendMessage("§6/scoreboard create <Name of the scoreboard> <displaySlot (sidebar/list/belowname)> <sortOrder (0->ascending/1->descending)>\n§eIt creates the scoreboard and save it.\n\n§6/scoreboard add <player / @all> <title>\n§eIt sends the scoreboard display.\n\n§6/scoreboard setLine <player / @all> <Name of the scoreboard> <line> <message>\n§eIt adds the line you want with the text you want to the scoreboard.§eThe player to which you are sending this setLine have to have received the scoreboard first.\n\n§6/scoreboard rmLine <player / @all> <Name of the scoreboard> <line>\n§eIt removes the line you want of the scoreboard.\n\n§6/scoreboard remove <player / @all> <Name of the scoreboard>\n§eIt removes the scoreboard display from the player.\n\n§6/scoreboard delete <Name of the scoreboard>\n§eIt removes the scoreboard from the database, that means that you wouldn't be able to use it in the future.§eNB: Please note that this command doesn't remove the scoreboard from it's viewers");
+						break;
+
+					default:
+						$sender->sendMessage("§e/scoreboard help/create/delete/add/remove/setLine/rmLine");
+						break;
+				}
+			}else{
+				$sender->sendMessage("§e/scoreboard help/create/delete/add/remove/setLine/rmLine");
 			}
 		}
 	}
