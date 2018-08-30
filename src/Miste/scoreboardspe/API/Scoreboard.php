@@ -192,9 +192,7 @@ class Scoreboard{
 
 		$pk3 = new SetScorePacket();
 		$pk3->type = SetScorePacket::TYPE_CHANGE;
-		foreach($this->plugin->getStore()->getEntries($this->objectiveName) as $index => $entry){
-			$pk3->entries[$index] = $entry;
-		}
+		$pk3->entries = $this->plugin->getStore()->getEntries($this->objectiveName);
 
 		foreach($this->plugin->getStore()->getViewers($this->objectiveName) as $name){
 			$p = $this->plugin->getServer()->getPlayer($name);

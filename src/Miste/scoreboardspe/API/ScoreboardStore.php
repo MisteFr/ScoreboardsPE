@@ -141,7 +141,7 @@ class ScoreboardStore{
 
 	public function addViewer(string $objectiveName, string $playerName){
 		if(!in_array($playerName, $this->viewers[$objectiveName])){
-			array_push($this->viewers[$objectiveName], $playerName);
+			$this->viewers[$objectiveName][] = $playerName;
 		}
 	}
 
