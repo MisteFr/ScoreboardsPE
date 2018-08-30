@@ -11,6 +11,7 @@ use pocketmine\event\player\PlayerChatEvent;
 use Miste\scoreboardspe\API\{
 	Scoreboard, ScoreboardAction, ScoreboardDisplaySlot, ScoreboardSort
 };
+use pocketmine\event\player\PlayerQuitEvent;
 
 class EventHandler implements Listener{
 
@@ -29,5 +30,9 @@ class EventHandler implements Listener{
 		for($i = 1; $i <= 15; $i++){
 			$scoreboard->setLine($event->getPlayer(), $i, "line$i");
 		}
+	}
+
+	public function onQuitEvent(PlayerQuitEvent $event){
+		$this->plugin->getStore()->removePotentialViewer($event->getPlayer()->getName());
 	}
 }

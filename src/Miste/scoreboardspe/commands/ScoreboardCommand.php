@@ -195,8 +195,22 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 						}
 						break;
 
+					case "rename":
+						if(!(count($args) < 3)){
+							if($this->plugin->getStore()->getId($args[1]) !== null){
+								$scoreboard = new Scoreboard($this->plugin, $args[1], ScoreboardAction::MODIFY);
+								$scoreboard->rename($args[1], $args[2]);
+								$sender->sendMessage("§aRenamed the scoreboard with title " . $args[1] . " to " . $args[2] . " and re sent it to all the viewers.");
+							}else{
+								$sender->sendMessage("§cThere is no scoreboard with that name.");
+							}
+						}else{
+							$sender->sendMessage("§e/scoreboard rename <old title> <new title>");
+						}
+						break;
+
 					case "help":
-						$sender->sendMessage("§6/scoreboard create <Name of the scoreboard> <displaySlot (sidebar/list/belowname)> <sortOrder (0->ascending/1->descending)>\n§eIt creates the scoreboard and save it.\n\n§6/scoreboard add <player / @all> <title>\n§eIt sends the scoreboard display.\n\n§6/scoreboard setLine <player / @all> <Name of the scoreboard> <line> <message>\n§eIt adds the line you want with the text you want to the scoreboard.§eThe player to which you are sending this setLine have to have received the scoreboard first.\n\n§6/scoreboard rmLine <player / @all> <Name of the scoreboard> <line>\n§eIt removes the line you want of the scoreboard.\n\n§6/scoreboard remove <player / @all> <Name of the scoreboard>\n§eIt removes the scoreboard display from the player.\n\n§6/scoreboard delete <Name of the scoreboard>\n§eIt removes the scoreboard from the database, that means that you wouldn't be able to use it in the future.§eNB: Please note that this command doesn't remove the scoreboard from it's viewers");
+						$sender->sendMessage("§6/scoreboard create <Name of the scoreboard> <displaySlot (sidebar/list/belowname)> <sortOrder (0->ascending/1->descending)>\n§eIt creates the scoreboard and save it.\n\n§6/scoreboard add <player / @all> <title>\n§eIt sends the scoreboard display.\n\n§6/scoreboard setLine <player / @all> <Name of the scoreboard> <line> <message>\n§eIt adds the line you want with the text you want to the scoreboard.§eThe player to which you are sending this setLine have to have received the scoreboard first.\n\n§6/scoreboard rmLine <player / @all> <Name of the scoreboard> <line>\n§eIt removes the line you want of the scoreboard.\n\n§6/scoreboard remove <player / @all> <Name of the scoreboard>\n§eIt removes the scoreboard display from the player.\n\n§6/scoreboard delete <Name of the scoreboard>\n§eIt removes the scoreboard from the database, that means that you wouldn't be able to use it in the future.§eNB: Please note that this command doesn't remove the scoreboard from it's viewers\n\n§6/scoreboard rename <old name> <new name>\n§eIt change the title of the scoreboard and re send it to all the original viewers.");
 						break;
 
 					default:

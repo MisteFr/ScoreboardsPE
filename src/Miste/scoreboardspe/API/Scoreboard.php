@@ -65,6 +65,8 @@ class Scoreboard{
 		$pk->sortOrder = $this->sortOrder;
 		$player->sendDataPacket($pk);
 
+		$this->plugin->getStore()->addViewer($this->objectiveName, $player->getName());
+
 		/*
 		 	I am not sure of what is exactly the belowname displaySlot
 		 */
@@ -82,6 +84,8 @@ class Scoreboard{
 		$pk = new RemoveObjectivePacket();
 		$pk->objectiveName = $this->objectiveName;
 		$player->sendDataPacket($pk);
+
+		$this->plugin->getStore()->removeViewer($this->objectiveName, $player->getName());
 	}
 
 	/**
@@ -151,8 +155,8 @@ class Scoreboard{
 	}
 
 	/**
-	 * @param string 	$displaySlot
-	 * @param int    	$sortOrder
+	 * @param string $displaySlot
+	 * @param int    $sortOrder
 	 */
 
 	public function create(string $displaySlot, int $sortOrder){
@@ -164,5 +168,47 @@ class Scoreboard{
 
 	public function delete(){
 		$this->plugin->getStore()->unregisterScoreboard($this->objectiveName, $this->displayName);
+	}
+
+	/**
+	 * @param string $oldName
+	 * @param string $newName
+	 */
+
+	public function rename(string $oldName, string $newName){
+		$this->displayName = $newName;
+
+		$this->plugin->getStore()->rename($oldName, $newName);
+
+		$pk = new RemoveObjectivePacket();
+		$pk->objectiveName = $this->objectiveName;
+
+		$pk2 = new SetDisplayObjectivePacket();
+		$pk2->displaySlot = $this->displaySlot;
+		$pk2->objectiveName = $this->objectiveName;
+		$pk2->displayName = $this->displayName;
+		$pk2->criteriaName = "dummy";
+		$pk2->sortOrder = $this->sortOrder;
+
+		$pk3 = new SetScorePacket();
+		$pk3->type = SetScorePacket::TYPE_CHANGE;
+		foreach($this->plugin->getStore()->getEntries($this->objectiveName) as $index => $entry){
+			$pk3->entries[$index] = $entry;
+		}
+
+		foreach($this->plugin->getStore()->getViewers($this->objectiveName) as $name){
+			$p = $this->plugin->getServer()->getPlayer($name);
+			$p->sendDataPacket($pk);
+			$p->sendDataPacket($pk2);
+			$p->sendDataPacket($pk3);
+		}
+	}
+
+	/**
+	 * @return array
+	 */
+
+	public function getViewers() : array{
+		return $this->plugin->getStore()->getViewers($this->objectiveName);
 	}
 }

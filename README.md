@@ -47,10 +47,14 @@ For exemple: ``/scoreboard rmLine Misteboss1 Miste
 
 <img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple1.png" width="100">
 
+* /scoreboard rename < old name > < new name >
+
+It renames your scoreboard and re send it to all the viewers.
+
 * /scoreboard remove < player / @all > < Name of the scoreboard >
 
 It removes the scoreboard from the player.  
-For exemple: ``/scoreboard remove @all Miste`` will remove the scoreboard from all the online players.  
+For exemple: ``/scoreboard remove @all Miste`` will remove the scoreboard from all the online players.    
 
 * /scoreboard delete < Name of the scoreboard >
 
@@ -108,6 +112,12 @@ $scoreboard->setLine($player, 9, "line9");
 $scoreboard->removeLine($player, 2);
 
 /*
+    Rename the scoreboard called Miste to Miste1 and re send it to all the viewers
+*/
+    
+$scoreboard->rename("Miste", "Miste1");
+
+/*
     Remove the scoreboard from the display of the player
 */
 
@@ -118,5 +128,13 @@ $scoreboard->removeDisplay($player);
 */
 
 $scoreboard->delete();
+
+/*
+    Return an array with all the players that can view the scoreboards
+    **NB** Players are automatically removed from this array if the player quits the server or if you remove the scoreboard for this player
+*/
+
+$scoreboard->getViewers();
+
 
 ```
