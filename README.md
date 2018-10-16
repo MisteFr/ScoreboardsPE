@@ -24,7 +24,7 @@ It creates the scoreboard and save it.
 * /scoreboard add < player / @all > < title >
 
 It sends the scoreboard display.  
-For exemple: ``/scoreboard add @all Miste
+For example: ``/scoreboard add @all Miste
 `` display that:
 
 <img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple1.png" width="100">
@@ -34,7 +34,7 @@ For exemple: ``/scoreboard add @all Miste
 It adds the line you want with the text you want to the scoreboard.  
 The player to which you are sending this setLine have to have received the scoreboard first.  
 **NB**: You can't add two lines with the same message. If you don't have any lines to your scoreboard and you add the line 4 it will add 3 empty lines too.  
-For exemple: ``/scoreboard setLine Misteboss1 Miste 1 My name is Miste
+For example: ``/scoreboard setLine Misteboss1 Miste 1 My name is Miste
 `` display that:
 
 <img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple2.png" width="200">  
@@ -42,7 +42,7 @@ For exemple: ``/scoreboard setLine Misteboss1 Miste 1 My name is Miste
 * /scoreboard rmLine < player / @all > < Name of the scoreboard > < line >
 
 It removes the line you want of the scoreboard.  
-For exemple: ``/scoreboard rmLine Misteboss1 Miste 
+For example: ``/scoreboard rmLine Misteboss1 Miste 
 `` display that:
 
 <img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple1.png" width="100">
@@ -54,13 +54,13 @@ It renames your scoreboard and re send it to all the viewers.
 * /scoreboard remove < player / @all > < Name of the scoreboard >
 
 It removes the scoreboard from the player.  
-For exemple: ``/scoreboard remove @all Miste`` will remove the scoreboard from all the online players.    
+For example: ``/scoreboard remove @all Miste`` will remove the scoreboard from all the online players.    
 
 * /scoreboard delete < Name of the scoreboard >
 
 It removes the scoreboard from the database, that means that you wouldn't be able to use it in the future.  
 **NB**: Please note that this command doesn't remove the scoreboard from it's viewers  
-Exemple: ``/scoreboard delete Miste`` will remove the scoreboard.
+Example: ``/scoreboard delete Miste`` will remove the scoreboard.
 
 * /scoreboard help
 
@@ -77,7 +77,7 @@ use Miste\scoreboardspe\API\{
     The id is created and saved linked with the display name internally
 */    
 
-$scoreboard = new Scoreboard($this->getServer()->getPluginManager()->getPlugin("ScoreboardsPE)->getPlugin(), "Miste", ScoreboardAction::CREATE);
+$scoreboard = new Scoreboard($this->getServer()->getPluginManager()->getPlugin("ScoreboardsPE")->getPlugin(), "Miste", ScoreboardAction::CREATE);
 $scoreboard->create(ScoreboardDisplaySlot::SIDEBAR, ScoreboardSort::DESCENDING);
 
 /*
@@ -85,7 +85,7 @@ $scoreboard->create(ScoreboardDisplaySlot::SIDEBAR, ScoreboardSort::DESCENDING);
     Here you will get back the instance of the scoreboard we created above
 */
 
-$scoreboard = new Scoreboard($this->getServer()->getPluginManager()->getPlugin("ScoreboardsPE)->getPlugin(), "Miste", ScoreboardAction::MODIFY);
+$scoreboard = new Scoreboard($this->getServer()->getPluginManager()->getPlugin("ScoreboardsPE")->getPlugin(), "Miste", ScoreboardAction::MODIFY);
 
 /*
     Send the scoreboard to the player (without any lines)
