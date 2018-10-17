@@ -1,8 +1,6 @@
 # ScoreboardPE
 
-A PocketMine-MP plugin that let you easily send scoreboards by using command on server who comes with a rich API for developers.
-
-**NB**: As scoreboards are going to be added in 1.7, this plugin only works with 1.7.0.2&1.7.0.3 beta.
+A PocketMine-MP plugin that let you easily send scoreboards by using command on server who comes with a rich API for developers for MCBE 1.7.
 ### Commands
 
 The command to use the soreboards is ``scoreboard``, his aliases are ``sc`` and ``score``.
