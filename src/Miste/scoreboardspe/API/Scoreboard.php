@@ -19,6 +19,7 @@ class Scoreboard{
 			if($this->plugin->getStore()->getId($title) === null){
 				$this->objectiveName = uniqid();
 			}else{
+				$this->getLogger()->info("The scoreboard $title already exists ! Therefore we are going to use its already existing data.");
 				$this->objectiveName = $this->plugin->getStore()->getId($title);
 				$this->displaySlot = $this->plugin->getStore()->getDisplaySlot($this->objectiveName);
 				$this->sortOrder = $this->plugin->getStore()->getSortOrder($this->objectiveName);
@@ -136,11 +137,10 @@ class Scoreboard{
 	}
 
 	/**
-	 * @param        $player
 	 * @param int    $line
 	 */
 
-	public function removeLine(Player $player, int $line){
+	public function removeLine(int $line){
 		$pk = new SetScorePacket();
 		$pk->type = SetScorePacket::TYPE_REMOVE;
 
@@ -149,9 +149,33 @@ class Scoreboard{
 		$entry->score = self::MAX_LINES - $line;
 		$entry->scoreboardId = ($this->scoreboardId + $line);
 		$pk->entries[] = $entry;
-		$player->sendDataPacket($pk);
+
+		foreach($this->plugin->getStore()->getViewers($this->objectiveName) as $name){
+			$p = $this->plugin->getServer()->getPlayer($name);
+			$p->sendDataPacket($pk);
+		}
 
 		$this->plugin->getStore()->removeEntry($this->objectiveName, $line);
+	}
+
+	public function removeLines(){
+		$pk = new SetScorePacket();
+		$pk->type = SetScorePacket::TYPE_REMOVE;
+
+		for($line = 0; $line <= self::MAX_LINES; $line++){
+			$entry = new ScorePacketEntry();
+			$entry->objectiveName = $this->objectiveName;
+			$entry->score = $line;
+			$entry->scoreboardId = ($this->scoreboardId + $line);
+			$pk->entries[] = $entry;
+		}
+
+		foreach($this->plugin->getStore()->getViewers($this->objectiveName) as $name){
+			$p = $this->plugin->getServer()->getPlayer($name);
+			$p->sendDataPacket($pk);
+		}
+
+		$this->plugin->getStore()->removeEntries($this->objectiveName);
 	}
 
 	/**

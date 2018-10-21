@@ -104,10 +104,16 @@ $scoreboard->setLine($player, 8, "line8");
 $scoreboard->setLine($player, 9, "line9");
 
 /*
-    Remove the line you choose from the scoreboard
+    Remove the line you choose from the scoreboard. This line will be removed from all the viewers.
 */
 
-$scoreboard->removeLine($player, 2);
+$scoreboard->removeLine(2);
+
+/*
+    Remove all the lines from the scoreboard. The lines will be removed from all the viewers.
+*/
+
+$scoreboard->removeLines();
 
 /*
     Rename the scoreboard called Miste to Miste1 and re send it to all the viewers

@@ -45,6 +45,14 @@ class ScoreboardStore{
 
 	/**
 	 * @param string $objectiveName
+	 */
+
+	public function removeEntries(string $objectiveName){
+		$this->entries[$objectiveName] = null;
+	}
+
+	/**
+	 * @param string $objectiveName
 	 * @param string $displayName
 	 * @param string $displaySlot
 	 * @param int    $sortOrder
