@@ -132,28 +132,15 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 						break;
 
 					case "rmLine":
-						if(!(count($args) < 4)){
-							if($this->plugin->getStore()->getId($args[2]) !== null){
-								if(is_numeric($args[3])){
-									if((int) $args[3] >= 1 && (int) $args[3] <= 15){
-										if($this->plugin->getStore()->entryExist($this->plugin->getStore()->getId($args[2]), $args[3])){
-											$scoreboard = new Scoreboard($this->plugin, $args[2], ScoreboardAction::MODIFY);
-											if($args[1] === "@all"){
-												foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
-													$scoreboard->removeLine($p, $args[3]);
-												}
-												$sender->sendMessage("§aRemoved line number " . $args[3] . " of scoreboard " . $args[2] . " for all the online players.");
-											}else{
-												$p = $this->plugin->getServer()->getPlayer($args[1]);
-												if($p !== null){
-													$scoreboard->removeLine($p, $args[3]);
-													$sender->sendMessage("§aRemoved line number " . $args[3] . " of the scoreboard " . $args[2] . " for " .  $p->getName());
-												}else{
-													$sender->sendMessage("§cThis player isn't online.");
-												}
-											}
+						if(!(count($args) < 3)){
+							if($this->plugin->getStore()->getId($args[1]) !== null){
+								if(is_numeric($args[2])){
+									if((int) $args[2] >= 1 && (int) $args[2] <= 15){
+										if($this->plugin->getStore()->entryExist($this->plugin->getStore()->getId($args[1]), $args[2])){
+											$scoreboard = new Scoreboard($this->plugin, $args[1], ScoreboardAction::MODIFY);
+											$scoreboard->removeLine($args[2]);
 										}else{
-											$sender->sendMessage("§cThis scoreboard doesn't have line number " . $args[3] . ".");
+											$sender->sendMessage("§cThis scoreboard doesn't have line number " . $args[2] . ".");
 										}
 									}else{
 										$sender->sendMessage("§cThe line number should be a number between 1 and 9.");
@@ -165,7 +152,7 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 								$sender->sendMessage("§cThere is no scoreboard with that name.");
 							}
 						}else{
-							$sender->sendMessage("§e/scoreboard rmLine <player / @all> <title of the scoreboard> <line>");
+							$sender->sendMessage("§e/scoreboard rmLine <title of the scoreboard> <line>");
 						}
 						break;
 
@@ -206,6 +193,20 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 							}
 						}else{
 							$sender->sendMessage("§e/scoreboard rename <old title> <new title>");
+						}
+						break;
+					
+					case "clearLines":
+						if(!(count($args) < 2)){
+							if($this->plugin->getStore()->getId($args[1]) !== null){
+								$scoreboard = new Scoreboard($this->plugin, $args[1], ScoreboardAction::MODIFY);
+								$scoreboard->removeLines();
+								$sender->sendMessage("§aCleared the lines of the scoreboard with title " . $args[1] . ".");
+							}else{
+								$sender->sendMessage("§cThere is no scoreboard with that name.");
+							}
+						}else{
+							$sender->sendMessage("§e/scoreboard clearLines <name of the scoreboard>");
 						}
 						break;
 

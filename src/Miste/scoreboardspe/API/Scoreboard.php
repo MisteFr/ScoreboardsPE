@@ -19,17 +19,21 @@ class Scoreboard{
 			if($this->plugin->getStore()->getId($title) === null){
 				$this->objectiveName = uniqid();
 			}else{
-				$this->getLogger()->info("The scoreboard $title already exists ! Therefore we are going to use its already existing data.");
+				$this->plugin->getLogger()->info("The scoreboard $title already exists ! Therefore we are going to use its already existing data.");
 				$this->objectiveName = $this->plugin->getStore()->getId($title);
 				$this->displaySlot = $this->plugin->getStore()->getDisplaySlot($this->objectiveName);
 				$this->sortOrder = $this->plugin->getStore()->getSortOrder($this->objectiveName);
 				$this->scoreboardId = $this->plugin->getStore()->getScoreboardId($this->objectiveName);
 			}
 		}else{
-			$this->objectiveName = $this->plugin->getStore()->getId($title);
-			$this->displaySlot = $this->plugin->getStore()->getDisplaySlot($this->objectiveName);
-			$this->sortOrder = $this->plugin->getStore()->getSortOrder($this->objectiveName);
-			$this->scoreboardId = $this->plugin->getStore()->getScoreboardId($this->objectiveName);
+			if($this->plugin->getStore()->getId($title) !== null){
+				$this->objectiveName = $this->plugin->getStore()->getId($title);
+				$this->displaySlot = $this->plugin->getStore()->getDisplaySlot($this->objectiveName);
+				$this->sortOrder = $this->plugin->getStore()->getSortOrder($this->objectiveName);
+				$this->scoreboardId = $this->plugin->getStore()->getScoreboardId($this->objectiveName);
+			}else{
+				$this->plugin->getLogger()->info("The scoreboard $title doesn't exist.");
+			}
 		}
 	}
 
@@ -110,7 +114,7 @@ class Scoreboard{
 		$pk = new SetScorePacket();
 		$pk->type = SetScorePacket::TYPE_CHANGE;
 
-		if(!$this->plugin->getStore()->entryExist($this->objectiveName, ($line - 2)) && $line !== 1){
+		if(!$this->plugin->getStore()->entryExist($this->objectiveName, ($line - 1)) && $line !== 1){
 			for($i = 1; $i <= ($line - 1); $i++){
 				if(!$this->plugin->getStore()->entryExist($this->objectiveName, ($i - 1))){
 					$entry = new ScorePacketEntry();
@@ -118,7 +122,7 @@ class Scoreboard{
 					$entry->type = ScorePacketEntry::TYPE_FAKE_PLAYER;
 					$entry->customName = str_repeat(" ", $i); //You can't send two lines with the same message
 					$entry->score = self::MAX_LINES - $i;
-					$entry->scoreboardId = ($this->scoreboardId + $i - 1);
+					$entry->scoreboardId = ($this->scoreboardId + $i);
 					$pk->entries[] = $entry;
 					$this->plugin->getStore()->addEntry($this->objectiveName, ($i - 1), $entry);
 				}
@@ -130,7 +134,7 @@ class Scoreboard{
 		$entry->type = ScorePacketEntry::TYPE_FAKE_PLAYER;
 		$entry->customName = $message;
 		$entry->score = self::MAX_LINES - $line;
-		$entry->scoreboardId = ($this->scoreboardId + $line);
+		$entry->scoreboardId = ($this->scoreboardId + $line); //You can't send two lines with the same sc id
 		$pk->entries[] = $entry;
 		$this->plugin->getStore()->addEntry($this->objectiveName, ($line - 1), $entry);
 		$player->sendDataPacket($pk);
@@ -234,5 +238,13 @@ class Scoreboard{
 
 	public function getViewers() : array{
 		return $this->plugin->getStore()->getViewers($this->objectiveName);
+	}
+
+	/**
+	 * @return array
+	 */
+
+	public function getEntries() : array{
+		return $this->plugin->getStore()->getEntries($this->objectiveName);
 	}
 }

@@ -1,69 +1,6 @@
 # ScoreboardPE
 
 A PocketMine-MP plugin that let you easily send scoreboards by using command on server who comes with a rich API for developers for MCBE 1.7.
-### Commands
-
-The command to use the soreboards is ``scoreboard``, his aliases are ``sc`` and ``score``.
-
-* /scoreboard create < Name of the scoreboard > < displaySlot (sidebar/list/belowname) > < sortOrder (0->ascending/1->descending) >
-
-  - **DisplaySlot**  
-  It's where the scoreboard is displayed on your screen
-    - sidebar: the default scoreboard position (at the right of your screen).
-    - list: above the player list.
-    - belowname: below the name of the player (not implemented in 1.7.0.2 beta).
-  - **Sort Order**  
-  This is the order in which your entries are classified.
-    - 0: The score is from the smallest to the biggest
-    - 1: The score is from the biggest to the smallest
-    
-It creates the scoreboard and save it.  
-
-* /scoreboard add < player / @all > < title >
-
-It sends the scoreboard display.  
-For example: ``/scoreboard add @all Miste
-`` display that:
-
-<img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple1.png" width="100">
-
-* /scoreboard setLine < player / @all > < Name of the scoreboard > < line > < message >
-
-It adds the line you want with the text you want to the scoreboard.  
-The player to which you are sending this setLine have to have received the scoreboard first.  
-**NB**: You can't add two lines with the same message. If you don't have any lines to your scoreboard and you add the line 4 it will add 3 empty lines too.  
-For example: ``/scoreboard setLine Misteboss1 Miste 1 My name is Miste
-`` display that:
-
-<img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple2.png" width="200">  
-
-* /scoreboard rmLine < player / @all > < Name of the scoreboard > < line >
-
-It removes the line you want of the scoreboard.  
-For example: ``/scoreboard rmLine Misteboss1 Miste 
-`` display that:
-
-<img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple1.png" width="100">
-
-* /scoreboard rename < old name > < new name >
-
-It renames your scoreboard and re send it to all the viewers.
-
-* /scoreboard remove < player / @all > < Name of the scoreboard >
-
-It removes the scoreboard from the player.  
-For example: ``/scoreboard remove @all Miste`` will remove the scoreboard from all the online players.    
-
-* /scoreboard delete < Name of the scoreboard >
-
-It removes the scoreboard from the database, that means that you wouldn't be able to use it in the future.  
-**NB**: Please note that this command doesn't remove the scoreboard from it's viewers  
-Example: ``/scoreboard delete Miste`` will remove the scoreboard.
-
-* /scoreboard help
-
-It gives you the list of available commands and how to use them.
-
 ### API
 ```
 use Miste\scoreboardspe\API\{
@@ -142,3 +79,70 @@ $scoreboard->getViewers();
 
 
 ```
+
+### Commands
+
+The command to use the soreboards is ``scoreboard``, its aliases are ``sc`` and ``score``.
+
+* /scoreboard create < Name of the scoreboard > < displaySlot (sidebar/list/belowname) > < sortOrder (0->ascending/1->descending) >
+
+  - **DisplaySlot**  
+  It's where the scoreboard is displayed on your screen
+    - sidebar: the default scoreboard position (at the right of your screen).
+    - list: above the player list.
+    - belowname: below the name of the player (not implemented in 1.7.0.2 beta).
+  - **Sort Order**  
+  This is the order in which your entries are classified.
+    - 0: The score is from the smallest to the biggest
+    - 1: The score is from the biggest to the smallest
+    
+It creates the scoreboard and save it.  
+
+* /scoreboard add < player / @all > < title >
+
+It sends the scoreboard display.  
+For example: ``/scoreboard add @all Miste
+`` display that:
+
+<img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple1.png" width="100">
+
+* /scoreboard setLine < player / @all > < Name of the scoreboard > < line > < message >
+
+It adds the line you want with the text you want to the scoreboard.  
+The player to which you are sending this setLine have to have received the scoreboard first.  
+**NB**: You can't add two lines with the same message. If you don't have any lines to your scoreboard and you add the line 4 it will add 3 empty lines too.  
+For example: ``/scoreboard setLine Misteboss1 Miste 1 My name is Miste
+`` display that:
+
+<img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple2.png" width="200">  
+
+* /scoreboard rmLine < Name of the scoreboard > < line >
+
+It removes the line you want of the scoreboard.  
+For example: ``/scoreboard rmLine Miste 1 
+`` display that:
+
+<img src="https://github.com/MisteFr/ScoreboardsPE/raw/master/img/exemple1.png" width="100">
+
+* /scoreboard clearLines < Name of the scoreboard >
+
+It removes all the lines from your scoreboard and resend it to all the viewers.
+
+* /scoreboard rename < old name > < new name >
+
+It renames your scoreboard and re send it to all the viewers.
+
+* /scoreboard remove < player / @all > < Name of the scoreboard >
+
+It removes the scoreboard from the player.  
+For example: ``/scoreboard remove @all Miste`` will remove the scoreboard from all the online players.    
+
+* /scoreboard delete < Name of the scoreboard >
+
+It removes the scoreboard from the database, that means that you wouldn't be able to use it in the future.  
+**NB**: Please note that this command doesn't remove the scoreboard from it's viewers  
+Example: ``/scoreboard delete Miste`` will remove the scoreboard.
+
+* /scoreboard help
+
+It gives you the list of available commands and how to use them.

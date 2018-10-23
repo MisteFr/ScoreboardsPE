@@ -1,0 +1,2 @@
+#If you want to use scoreboards on your server using command too turn register-commands to true.
+register-commands: false
