@@ -57,6 +57,9 @@ class Scoreboard{
 	/** @var int */
 	private $scoreboardId;
 
+	/** @var bool */
+	private $padding;
+
 	/**
 	 * @param        $player
 	 */
@@ -99,7 +102,7 @@ class Scoreboard{
 	 * @param string $message
 	 */
 
-	public function setLine(Player $player, int $line, string $message){
+	public function setLine(Player $player, int $line, string $message, bool $padding = true){
 		$pk = new SetScorePacket();
 		$pk->type = SetScorePacket::TYPE_REMOVE;
 
@@ -132,7 +135,7 @@ class Scoreboard{
 		$entry = new ScorePacketEntry();
 		$entry->objectiveName = $this->objectiveName;
 		$entry->type = ScorePacketEntry::TYPE_FAKE_PLAYER;
-		$entry->customName = $message;
+		$this->padding ? $entry->customName = str_pad($message, ((strlen($this->displayName) * 2) - strlen($message))) : $entry->customName = $message;
 		$entry->score = self::MAX_LINES - $line;
 		$entry->scoreboardId = ($this->scoreboardId + $line); //You can't send two lines with the same sc id
 		$pk->entries[] = $entry;
@@ -187,9 +190,10 @@ class Scoreboard{
 	 * @param int    $sortOrder
 	 */
 
-	public function create(string $displaySlot, int $sortOrder){
+	public function create(string $displaySlot, int $sortOrder, bool $padding = true){
 		$this->displaySlot = $displaySlot;
 		$this->sortOrder = $sortOrder;
+		$this->padding = $padding;
 		$this->scoreboardId = mt_rand(1, 100000);
 		$this->plugin->getStore()->registerScoreboard($this->objectiveName, $this->displayName, $this->displaySlot, $this->sortOrder, $this->scoreboardId);
 	}

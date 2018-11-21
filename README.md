@@ -1,6 +1,6 @@
 # ScoreboardPE
 
-A PocketMine-MP plugin that let you easily send scoreboards by using command on server who comes with a rich API for developers for MCBE 1.7.
+A PocketMine-MP plugin that let you easily send scoreboards by using commands on your server who comes with a rich API for developers for MCBE 1.7 & 1.8.
 ### API
 ```
 use Miste\scoreboardspe\API\{
@@ -10,10 +10,11 @@ use Miste\scoreboardspe\API\{
 /*
     Create a scoreboard with the display name Miste
     The id is created and saved linked with the display name internally
+    You can choose if you want your lines to be padded or not (by default there will be padded).
 */    
 
 $scoreboard = new Scoreboard($this->getServer()->getPluginManager()->getPlugin("ScoreboardsPE")->getPlugin(), "Miste", ScoreboardAction::CREATE);
-$scoreboard->create(ScoreboardDisplaySlot::SIDEBAR, ScoreboardSort::DESCENDING);
+$scoreboard->create(ScoreboardDisplaySlot::SIDEBAR, ScoreboardSort::DESCENDING, true); //true for padding, false for no padding
 
 /*
     If you want to get back the Scoreboard instance of one of your scoreboard do as you were creating on and add the ScoreboardAction::MODIFY at the end of the constructor.
@@ -26,7 +27,7 @@ $scoreboard = new Scoreboard($this->getServer()->getPluginManager()->getPlugin("
     Send the scoreboard to the player (without any lines)
 */
 
-$scoreboard->addDisplay($player, ScoreboardDisplaySlot::SIDEBAR, ScoreboardSort::ASCENDING);
+$scoreboard->addDisplay($player);
 
 /*
     Add lines to the scoreboard O
