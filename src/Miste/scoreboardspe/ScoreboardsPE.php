@@ -26,7 +26,7 @@ class ScoreboardsPE extends PluginBase{
 
 		if($config->get("register-commands") === true){
 			$this->getLogger()->info("Registering commands !");
-			$this->getServer()->getCommandMap()->register("scoreboard", new ScoreboardCommand($this, "scoreboard"));
+			$this->getServer()->getCommandMap()->register("scoreboardspe", new ScoreboardCommand($this, "scoreboard"));
 		}
 
 		$this->scoreboardStore = new ScoreboardStore();
