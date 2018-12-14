@@ -141,6 +141,18 @@ class Scoreboard{
 		$pk->entries[] = $entry;
 		$this->plugin->getStore()->addEntry($this->objectiveName, ($line - 1), $entry);
 		$player->sendDataPacket($pk);
+		
+		$pk = new SetDisplayObjectivePacket();
+		$pk->displaySlot = $this->displaySlot;
+		$pk->objectiveName = $this->objectiveName;
+		$pk->displayName = $this->displayName;
+		$pk->criteriaName = "dummy";
+		$pk->sortOrder = $this->sortOrder;
+		$player->sendDataPacket($pk);
+		
+		if($this->displaySlot === "belowname"){
+			$player->setScoreTag($this->displayName);
+		}
 	}
 
 	/**
@@ -160,6 +172,18 @@ class Scoreboard{
 		foreach($this->plugin->getStore()->getViewers($this->objectiveName) as $name){
 			$p = $this->plugin->getServer()->getPlayer($name);
 			$p->sendDataPacket($pk);
+			
+			$pk = new SetDisplayObjectivePacket();
+			$pk->displaySlot = $this->displaySlot;
+			$pk->objectiveName = $this->objectiveName;
+			$pk->displayName = $this->displayName;
+			$pk->criteriaName = "dummy";
+			$pk->sortOrder = $this->sortOrder;
+			$p->sendDataPacket($pk);
+		
+			if($this->displaySlot === "belowname"){
+				$p->setScoreTag($this->displayName);
+			}
 		}
 
 		$this->plugin->getStore()->removeEntry($this->objectiveName, $line);
@@ -180,6 +204,18 @@ class Scoreboard{
 		foreach($this->plugin->getStore()->getViewers($this->objectiveName) as $name){
 			$p = $this->plugin->getServer()->getPlayer($name);
 			$p->sendDataPacket($pk);
+			
+			$pk = new SetDisplayObjectivePacket();
+			$pk->displaySlot = $this->displaySlot;
+			$pk->objectiveName = $this->objectiveName;
+			$pk->displayName = $this->displayName;
+			$pk->criteriaName = "dummy";
+			$pk->sortOrder = $this->sortOrder;
+			$p->sendDataPacket($pk);
+		
+			if($this->displaySlot === "belowname"){
+				$p->setScoreTag($this->displayName);
+			}
 		}
 
 		$this->plugin->getStore()->removeEntries($this->objectiveName);
