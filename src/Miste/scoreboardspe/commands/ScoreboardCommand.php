@@ -98,25 +98,13 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 						break;
 
 					case "setLine":
-						if(!(count($args) < 5)){
-							if($this->plugin->getStore()->getId($args[2]) !== null){
-								if(is_numeric($args[3])){
-									if((int) $args[3] >= 1 && (int) $args[3] <= 15){
+						if(!(count($args) < 4)){
+							if($this->plugin->getStore()->getId($args[1]) !== null){
+								if(is_numeric($args[2])){
+									if((int) $args[2] >= 1 && (int) $args[2] <= 15){
 										$scoreboard = new Scoreboard($this->plugin, $args[2], ScoreboardAction::MODIFY);
-										if($args[1] === "@all"){
-											foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
-												$scoreboard->setLine($p, (int) $args[3], implode(" ", array_slice($args, 4)));
-											}
-											$sender->sendMessage("§aSent line number " . $args[3] . " of scoreboard " . $args[2] . " to all the online players.");
-										}else{
-											$p = $this->plugin->getServer()->getPlayer($args[1]);
-											if($p !== null){
-												$scoreboard->setLine($p, (int) $args[3], implode(" ", array_slice($args, 4)));
-												$sender->sendMessage("§aSent line number " . $args[3] . " of scoreboard " . $args[2] . " to " .  $p->getName());
-											}else{
-												$sender->sendMessage("§cThis player isn't online.");
-											}
-										}
+										$scoreboard->setLine((int) $args[2], implode(" ", array_slice($args, 3)));
+										$sender->sendMessage("§aSent line number " . $args[2] . " of scoreboard " . $args[1] . " to all the online players.");
 									}else{
 										$sender->sendMessage("§cThe line number should be a number between 1 and 9.");
 									}
@@ -127,7 +115,7 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 								$sender->sendMessage("§cThere is no scoreboard with that name.");
 							}
 						}else{
-							$sender->sendMessage("§e/scoreboard setLine <player / @all> <title of the scoreboard> <line> <message>");
+							$sender->sendMessage("§e/scoreboard setLine <title of the scoreboard> <line> <message>");
 						}
 						break;
 
@@ -211,7 +199,7 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 						break;
 
 					case "help":
-						$sender->sendMessage("§6/scoreboard create <Name of the scoreboard> <displaySlot (sidebar/list/belowname)> <sortOrder (0->ascending/1->descending)>\n§eIt creates the scoreboard and save it.\n\n§6/scoreboard add <player / @all> <title>\n§eIt sends the scoreboard display.\n\n§6/scoreboard setLine <player / @all> <Name of the scoreboard> <line> <message>\n§eIt adds the line you want with the text you want to the scoreboard.§eThe player to which you are sending this setLine have to have received the scoreboard first.\n\n§6/scoreboard rmLine <player / @all> <Name of the scoreboard> <line>\n§eIt removes the line you want of the scoreboard.\n\n§6/scoreboard remove <player / @all> <Name of the scoreboard>\n§eIt removes the scoreboard display from the player.\n\n§6/scoreboard delete <Name of the scoreboard>\n§eIt removes the scoreboard from the database, that means that you wouldn't be able to use it in the future.§eNB: Please note that this command doesn't remove the scoreboard from it's viewers\n\n§6/scoreboard rename <old name> <new name>\n§eIt change the title of the scoreboard and re send it to all the original viewers.");
+						$sender->sendMessage("§6/scoreboard create <Name of the scoreboard> <displaySlot (sidebar/list/belowname)> <sortOrder (0->ascending/1->descending)>\n§eIt creates the scoreboard and save it.\n\n§6/scoreboard add <player / @all> <title>\n§eIt sends the scoreboard display.\n\n§6/scoreboard setLine <Name of the scoreboard> <line> <message>\n§eIt adds the line you want with the text you want to the scoreboard.§eThe player to which you are sending this setLine have to have received the scoreboard first.\n\n§6/scoreboard rmLine <player / @all> <Name of the scoreboard> <line>\n§eIt removes the line you want of the scoreboard.\n\n§6/scoreboard remove <player / @all> <Name of the scoreboard>\n§eIt removes the scoreboard display from the player.\n\n§6/scoreboard delete <Name of the scoreboard>\n§eIt removes the scoreboard from the database, that means that you wouldn't be able to use it in the future.§eNB: Please note that this command doesn't remove the scoreboard from it's viewers\n\n§6/scoreboard rename <old name> <new name>\n§eIt change the title of the scoreboard and re send it to all the original viewers.");
 						break;
 
 					default:

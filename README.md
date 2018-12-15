@@ -32,14 +32,15 @@ $scoreboard->addDisplay($player);
 /*
     Add lines to the scoreboard O
     If you send line 1 then line 4 the plugin will automatically send two empty lines between.
-    The max number of lines is 15, send more than 15 can bring issues when removing some
+    The max number of lines is 15, send more than 15 can bring issues when removing some.
+    The lines are automatically sent to all the viewers of the scoreboard.
 */
 
-$scoreboard->setLine($player, 1, "line1");
-$scoreboard->setLine($player, 2, "line2");
-$scoreboard->setLine($player, 5, "line5");
-$scoreboard->setLine($player, 8, "line8");
-$scoreboard->setLine($player, 9, "line9");
+$scoreboard->setLine(1, "line1");
+$scoreboard->setLine(2, "line2");
+$scoreboard->setLine(5, "line5");
+$scoreboard->setLine(8, "line8");
+$scoreboard->setLine(9, "line9");
 
 /*
     Remove the line you choose from the scoreboard. This line will be removed from all the viewers.

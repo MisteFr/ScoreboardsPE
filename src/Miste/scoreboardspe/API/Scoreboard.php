@@ -97,26 +97,11 @@ class Scoreboard{
 	}
 
 	/**
-	 * @param        $player
 	 * @param int    $line
 	 * @param string $message
 	 */
 
-	public function setLine(Player $player, int $line, string $message, bool $padding = true){
-		$pk = new SetScorePacket();
-		$pk->type = SetScorePacket::TYPE_REMOVE;
-
-		$entry = new ScorePacketEntry();
-		$entry->objectiveName = $this->objectiveName;
-		$entry->score = self::MAX_LINES - $line;
-		$entry->scoreboardId = ($this->scoreboardId + $line);
-		$pk->entries[] = $entry;
-		$player->sendDataPacket($pk);
-
-
-		$pk = new SetScorePacket();
-		$pk->type = SetScorePacket::TYPE_CHANGE;
-
+	public function setLine(int $line, string $message, bool $padding = true){
 		if(!$this->plugin->getStore()->entryExist($this->objectiveName, ($line - 1)) && $line !== 1){
 			for($i = 1; $i <= ($line - 1); $i++){
 				if(!$this->plugin->getStore()->entryExist($this->objectiveName, ($i - 1))){
@@ -140,7 +125,18 @@ class Scoreboard{
 		$entry->scoreboardId = ($this->scoreboardId + $line); //You can't send two lines with the same sc id
 		$pk->entries[] = $entry;
 		$this->plugin->getStore()->addEntry($this->objectiveName, ($line - 1), $entry);
-		$player->sendDataPacket($pk);
+
+		foreach($this->plugin->getStore()->getViewers($this->objectiveName) as $name){
+			$p = $this->plugin->getServer()->getPlayer($name);
+			if($p !== null){
+				$pk = new SetScorePacket();
+				$pk->type = SetScorePacket::TYPE_CHANGE;
+				foreach($this->plugin->getStore()->getEntries($this->objectiveName) as $index => $entry){
+					$pk3->entries[$index] = $entry;
+				}
+				$p->sendDataPacket($pk);
+			}
+		}
 	}
 
 	/**
