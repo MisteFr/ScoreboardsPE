@@ -1,9 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Miste\scoreboardspe\API;
 
 use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 
+/**
+ * Class ScoreboardStore
+ * @package Miste\scoreboardspe\API
+ */
 class ScoreboardStore{
 
 	/** @var array */
@@ -29,7 +35,6 @@ class ScoreboardStore{
 	 * @param int              $line
 	 * @param ScorePacketEntry $entry
 	 */
-
 	public function addEntry(string $objectiveName, int $line, ScorePacketEntry $entry){
 		$this->entries[$objectiveName][$line] = $entry;
 	}
@@ -38,16 +43,14 @@ class ScoreboardStore{
 	 * @param string $objectiveName
 	 * @param int    $line
 	 */
-
-	public function removeEntry(string $objectiveName, int $line){
+	public function removeEntry(string $objectiveName, int $line) : void{
 		unset($this->entries[$objectiveName][$line]);
 	}
 
 	/**
 	 * @param string $objectiveName
 	 */
-
-	public function removeEntries(string $objectiveName){
+	public function removeEntries(string $objectiveName) : void{
 		$this->entries[$objectiveName] = null;
 	}
 
@@ -56,9 +59,9 @@ class ScoreboardStore{
 	 * @param string $displayName
 	 * @param string $displaySlot
 	 * @param int    $sortOrder
+	 * @param int    $scoreboardId
 	 */
-
-	public function registerScoreboard(string $objectiveName, string $displayName, string $displaySlot, int $sortOrder, int $scoreboardId){
+	public function registerScoreboard(string $objectiveName, string $displayName, string $displaySlot, int $sortOrder, int $scoreboardId) : void{
 		$this->entries[$objectiveName] = null;
 		$this->scoreboards[$displayName] = $objectiveName;
 		$this->displaySlots[$objectiveName] = $displaySlot;
@@ -67,12 +70,12 @@ class ScoreboardStore{
 		$this->viewers[$objectiveName] = [];
 	}
 
+
 	/**
 	 * @param string $objectiveName
 	 * @param string $displayName
 	 */
-
-	public function unregisterScoreboard(string $objectiveName, string $displayName){
+	public function unregisterScoreboard(string $objectiveName, string $displayName) : void{
 		unset($this->entries[$objectiveName]);
 		unset($this->scoreboards[$displayName]);
 		unset($this->displaySlots[$objectiveName]);
@@ -83,10 +86,8 @@ class ScoreboardStore{
 
 	/**
 	 * @param string $objectiveName
-	 *
 	 * @return array
 	 */
-
 	public function getEntries(string $objectiveName) : array{
 		return $this->entries[$objectiveName];
 	}
@@ -94,50 +95,40 @@ class ScoreboardStore{
 	/**
 	 * @param string $objectiveName
 	 * @param int    $line
-	 *
 	 * @return bool
 	 */
-
 	public function entryExist(string $objectiveName, int $line) : bool{
 		return isset($this->entries[$objectiveName][$line]);
 	}
 
 	/**
 	 * @param string $displayName
-	 *
-	 * @return string|null
+	 * @return mixed|null
 	 */
-
 	public function getId(string $displayName){
 		return $this->scoreboards[$displayName] ?? null;
 	}
 
 	/**
 	 * @param string $objectiveName
-	 *
 	 * @return string
 	 */
-
 	public function getDisplaySlot(string $objectiveName) : string{
 		return $this->displaySlots[$objectiveName];
 	}
 
 	/**
 	 * @param string $objectiveName
-	 *
 	 * @return int
 	 */
-
 	public function getSortOrder(string $objectiveName) : int{
 		return $this->sortOrders[$objectiveName];
 	}
 
 	/**
 	 * @param string $objectiveName
-	 *
 	 * @return int
 	 */
-
 	public function getScoreboardId(string $objectiveName) : int{
 		return $this->ids[$objectiveName];
 	}
@@ -146,8 +137,7 @@ class ScoreboardStore{
 	 * @param string $objectiveName
 	 * @param string $playerName
 	 */
-
-	public function addViewer(string $objectiveName, string $playerName){
+	public function addViewer(string $objectiveName, string $playerName) : void{
 		if(!in_array($playerName, $this->viewers[$objectiveName])){
 			array_push($this->viewers[$objectiveName], $playerName);
 		}
@@ -157,8 +147,7 @@ class ScoreboardStore{
 	 * @param string $objectiveName
 	 * @param string $playerName
 	 */
-
-	public function removeViewer(string $objectiveName, string $playerName){
+	public function removeViewer(string $objectiveName, string $playerName) : void{
 		if(in_array($playerName, $this->viewers[$objectiveName])){
 			if(($key = array_search($playerName, $this->viewers[$objectiveName])) !== false){
 				unset($this->viewers[$objectiveName][$key]);
@@ -166,22 +155,20 @@ class ScoreboardStore{
 		}
 	}
 
+
 	/**
 	 * @param string $objectiveName
-	 *
 	 * @return array|null
 	 */
-
 	public function getViewers(string $objectiveName) : ?array{
 		return $this->viewers[$objectiveName] ?? null;
 	}
 
 	/**
 	 * @param string $oldName
-	 * @param string $newName
+	 * @param string $newName]
 	 */
-
-	public function rename(string $oldName, string $newName){
+	public function rename(string $oldName, string $newName) : void{
 		$this->scoreboards[$newName] = $this->scoreboards[$oldName];
 		unset($this->scoreboards[$oldName]);
 	}
@@ -189,8 +176,7 @@ class ScoreboardStore{
 	/**
 	 * @param string $playerName
 	 */
-
-	public function removePotentialViewer(string $playerName){
+	public function removePotentialViewer(string $playerName) : void{
 		foreach($this->viewers as $name => $data){
 			if(in_array($playerName, $data)){
 				if(($key = array_search($playerName, $data)) !== false){
@@ -202,10 +188,8 @@ class ScoreboardStore{
 
 	/**
 	 * @param string $displayName
-	 *
 	 * @return string|null
 	 */
-
 	public function getScoreboardName(string $displayName) : ?string{
 		return $this->scoreboards[$displayName] ?? null;
 	}

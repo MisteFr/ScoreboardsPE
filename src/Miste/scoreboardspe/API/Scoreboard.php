@@ -1,17 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Miste\scoreboardspe\API;
 
 use Miste\scoreboardspe\ScoreboardsPE;
+use pocketmine\network\mcpe\protocol\{RemoveObjectivePacket, SetDisplayObjectivePacket, SetScorePacket};
+use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 use pocketmine\Player;
 
-use pocketmine\network\mcpe\protocol\{
-	SetScorePacket, RemoveObjectivePacket, SetDisplayObjectivePacket
-};
-use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
-
+/**
+ * Class Scoreboard
+ * @package Miste\scoreboardspe\API
+ */
 class Scoreboard{
 
+	/**
+	 * Scoreboard constructor.
+	 * @param ScoreboardsPE $plugin
+	 * @param string        $title
+	 * @param int           $action
+	 */
 	public function __construct(ScoreboardsPE $plugin, string $title, int $action){
 		$this->plugin = $plugin;
 		$this->displayName = $title;
@@ -37,6 +46,7 @@ class Scoreboard{
 		}
 	}
 
+	/** @var int */
 	const MAX_LINES = 15;
 
 	/** @var ScoreboardsPE */
@@ -61,10 +71,9 @@ class Scoreboard{
 	private $padding;
 
 	/**
-	 * @param        $player
+	 * @param Player $player
 	 */
-
-	public function addDisplay(Player $player){
+	public function addDisplay(Player $player) : void{
 		$pk = new SetDisplayObjectivePacket();
 		$pk->displaySlot = $this->displaySlot;
 		$pk->objectiveName = $this->objectiveName;
@@ -85,10 +94,9 @@ class Scoreboard{
 	}
 
 	/**
-	 * @param        $player
+	 * @param Player $player
 	 */
-
-	public function removeDisplay(Player $player){
+	public function removeDisplay(Player $player) : void{
 		$pk = new RemoveObjectivePacket();
 		$pk->objectiveName = $this->objectiveName;
 		$player->sendDataPacket($pk);
@@ -100,8 +108,7 @@ class Scoreboard{
 	 * @param int    $line
 	 * @param string $message
 	 */
-
-	public function setLine(int $line, string $message, bool $padding = true){
+	public function setLine(int $line, string $message) : void{
 		if(!$this->plugin->getStore()->entryExist($this->objectiveName, ($line - 1)) && $line !== 1){
 			for($i = 1; $i <= ($line - 1); $i++){
 				if(!$this->plugin->getStore()->entryExist($this->objectiveName, ($i - 1))){
@@ -111,7 +118,6 @@ class Scoreboard{
 					$entry->customName = str_repeat(" ", $i); //You can't send two lines with the same message
 					$entry->score = self::MAX_LINES - $i;
 					$entry->scoreboardId = ($this->scoreboardId + $i);
-					$pk->entries[] = $entry;
 					$this->plugin->getStore()->addEntry($this->objectiveName, ($i - 1), $entry);
 				}
 			}
@@ -123,7 +129,6 @@ class Scoreboard{
 		$this->padding ? $entry->customName = str_pad($message, ((strlen($this->displayName) * 2) - strlen($message))) : $entry->customName = $message;
 		$entry->score = self::MAX_LINES - $line;
 		$entry->scoreboardId = ($this->scoreboardId + $line); //You can't send two lines with the same sc id
-		$pk->entries[] = $entry;
 		$this->plugin->getStore()->addEntry($this->objectiveName, ($line - 1), $entry);
 
 		foreach($this->plugin->getStore()->getViewers($this->objectiveName) as $name){
@@ -132,7 +137,7 @@ class Scoreboard{
 				$pk = new SetScorePacket();
 				$pk->type = SetScorePacket::TYPE_CHANGE;
 				foreach($this->plugin->getStore()->getEntries($this->objectiveName) as $index => $entry){
-					$pk3->entries[$index] = $entry;
+					$pk->entries[$index] = $entry;
 				}
 				$p->sendDataPacket($pk);
 			}
@@ -140,10 +145,9 @@ class Scoreboard{
 	}
 
 	/**
-	 * @param int    $line
+	 * @param int $line
 	 */
-
-	public function removeLine(int $line){
+	public function removeLine(int $line) : void{
 		$pk = new SetScorePacket();
 		$pk->type = SetScorePacket::TYPE_REMOVE;
 
@@ -161,7 +165,7 @@ class Scoreboard{
 		$this->plugin->getStore()->removeEntry($this->objectiveName, $line);
 	}
 
-	public function removeLines(){
+	public function removeLines() : void{
 		$pk = new SetScorePacket();
 		$pk->type = SetScorePacket::TYPE_REMOVE;
 
@@ -184,9 +188,9 @@ class Scoreboard{
 	/**
 	 * @param string $displaySlot
 	 * @param int    $sortOrder
+	 * @param bool   $padding
 	 */
-
-	public function create(string $displaySlot, int $sortOrder, bool $padding = true){
+	public function create(string $displaySlot, int $sortOrder, bool $padding = true) : void{
 		$this->displaySlot = $displaySlot;
 		$this->sortOrder = $sortOrder;
 		$this->padding = $padding;
@@ -194,7 +198,7 @@ class Scoreboard{
 		$this->plugin->getStore()->registerScoreboard($this->objectiveName, $this->displayName, $this->displaySlot, $this->sortOrder, $this->scoreboardId);
 	}
 
-	public function delete(){
+	public function delete() : void{
 		$this->plugin->getStore()->unregisterScoreboard($this->objectiveName, $this->displayName);
 	}
 
@@ -202,8 +206,7 @@ class Scoreboard{
 	 * @param string $oldName
 	 * @param string $newName
 	 */
-
-	public function rename(string $oldName, string $newName){
+	public function rename(string $oldName, string $newName) : void{
 		$this->displayName = $newName;
 
 		$this->plugin->getStore()->rename($oldName, $newName);
@@ -235,7 +238,6 @@ class Scoreboard{
 	/**
 	 * @return array
 	 */
-
 	public function getViewers() : array{
 		return $this->plugin->getStore()->getViewers($this->objectiveName);
 	}
@@ -243,7 +245,6 @@ class Scoreboard{
 	/**
 	 * @return array
 	 */
-
 	public function getEntries() : array{
 		return $this->plugin->getStore()->getEntries($this->objectiveName);
 	}

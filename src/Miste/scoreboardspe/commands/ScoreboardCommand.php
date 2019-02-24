@@ -1,24 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Miste\scoreboardspe\commands;
 
-use pocketmine\command\{
-	Command, CommandSender, PluginIdentifiableCommand
-};
-use Miste\scoreboardspe\API\{
-	Scoreboard, ScoreboardAction, ScoreboardDisplaySlot, ScoreboardSort
-};
+use Miste\scoreboardspe\API\{Scoreboard, ScoreboardAction};
 use Miste\scoreboardspe\ScoreboardsPE;
+use pocketmine\command\{Command, CommandSender, PluginIdentifiableCommand};
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 
-
+/**
+ * Class ScoreboardCommand
+ * @package Miste\scoreboardspe\commands
+ */
 class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
-
 
 	/** @var ScoreboardsPE */
 	private $plugin;
 
+	/**
+	 * ScoreboardCommand constructor.
+	 * @param ScoreboardsPE $plugin
+	 * @param string        $name
+	 */
 	public function __construct(ScoreboardsPE $plugin, string $name){
 		parent::__construct($name, "Send a scoreboard with a command !", "/scoreboard add <player / @all> <title> <displaySlot (sidebar/list/belowname> <sortOrder (0->ascending/1->descending)>", ["sc", "score"]);
 		$this->plugin = $plugin;
@@ -27,10 +32,19 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 		$this->setUsage("/scoreboard help/create/delete/add/remove/setLine/rmLine");
 	}
 
+	/**
+	 * @return Plugin
+	 */
 	public function getPlugin() : Plugin{
 		return $this->plugin;
 	}
 
+	/**
+	 * @param CommandSender $sender
+	 * @param string        $commandLabel
+	 * @param array         $args
+	 * @return mixed|void
+	 */
 	public function execute(CommandSender $sender, $commandLabel, array $args){
 		if($sender instanceof Player){
 			if(count($args) > 0){
@@ -183,7 +197,7 @@ class ScoreboardCommand extends Command implements PluginIdentifiableCommand{
 							$sender->sendMessage("§e/scoreboard rename <old title> <new title>");
 						}
 						break;
-					
+
 					case "clearLines":
 						if(!(count($args) < 2)){
 							if($this->plugin->getStore()->getId($args[1]) !== null){
