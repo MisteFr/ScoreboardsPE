@@ -1,6 +1,6 @@
 # ScoreboardPE
 [![](https://poggit.pmmp.io/shield.state/ScoreboardsPE)](https://poggit.pmmp.io/p/ScoreboardsPE) [![](https://poggit.pmmp.io/shield.dl.total/ScoreboardsPE)](https://poggit.pmmp.io/p/ScoreboardsPE)  
-A PocketMine-MP plugin that let you easily send scoreboards by using commands on your server who comes with a rich API for developers for MCBE 1.7 & 1.8.
+A PocketMine-MP plugin that let you easily send scoreboards by using commands on your server who comes with a rich API for developers for MCBE 1.7, 1.8 & 1.9.
 ### API
 ```
 use Miste\scoreboardspe\API\{

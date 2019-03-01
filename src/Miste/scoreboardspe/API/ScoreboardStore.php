@@ -58,7 +58,7 @@ class ScoreboardStore{
 	 * @param int    $sortOrder
 	 */
 
-	public function registerScoreboard(string $objectiveName, string $displayName, string $displaySlot, int $sortOrder, int $scoreboardId){
+	public function registerScoreboard(string $objectiveName, string $displayName, string $displaySlot, int $sortOrder, int $scoreboardId) : void{
 		$this->entries[$objectiveName] = null;
 		$this->scoreboards[$displayName] = $objectiveName;
 		$this->displaySlots[$objectiveName] = $displaySlot;
@@ -72,7 +72,7 @@ class ScoreboardStore{
 	 * @param string $displayName
 	 */
 
-	public function unregisterScoreboard(string $objectiveName, string $displayName){
+	public function unregisterScoreboard(string $objectiveName, string $displayName) : void{
 		unset($this->entries[$objectiveName]);
 		unset($this->scoreboards[$displayName]);
 		unset($this->displaySlots[$objectiveName]);
@@ -147,7 +147,7 @@ class ScoreboardStore{
 	 * @param string $playerName
 	 */
 
-	public function addViewer(string $objectiveName, string $playerName){
+	public function addViewer(string $objectiveName, string $playerName) : void{
 		if(!in_array($playerName, $this->viewers[$objectiveName])){
 			array_push($this->viewers[$objectiveName], $playerName);
 		}
@@ -158,7 +158,7 @@ class ScoreboardStore{
 	 * @param string $playerName
 	 */
 
-	public function removeViewer(string $objectiveName, string $playerName){
+	public function removeViewer(string $objectiveName, string $playerName) : void{
 		if(in_array($playerName, $this->viewers[$objectiveName])){
 			if(($key = array_search($playerName, $this->viewers[$objectiveName])) !== false){
 				unset($this->viewers[$objectiveName][$key]);
@@ -181,7 +181,7 @@ class ScoreboardStore{
 	 * @param string $newName
 	 */
 
-	public function rename(string $oldName, string $newName){
+	public function rename(string $oldName, string $newName) : void{
 		$this->scoreboards[$newName] = $this->scoreboards[$oldName];
 		unset($this->scoreboards[$oldName]);
 	}
@@ -190,7 +190,7 @@ class ScoreboardStore{
 	 * @param string $playerName
 	 */
 
-	public function removePotentialViewer(string $playerName){
+	public function removePotentialViewer(string $playerName) : void{
 		foreach($this->viewers as $name => $data){
 			if(in_array($playerName, $data)){
 				if(($key = array_search($playerName, $data)) !== false){

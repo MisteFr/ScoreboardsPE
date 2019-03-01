@@ -13,6 +13,7 @@ use pocketmine\utils\Config;
 
 class ScoreboardsPE extends PluginBase{
 
+	/** @var ScoreboardStore */
 	private $scoreboardStore;
 
 	public function onEnable() : void{
@@ -33,10 +34,16 @@ class ScoreboardsPE extends PluginBase{
 		$this->getLogger()->info("I have been enabled !");
 	}
 
+	/**
+	 * @return ScoreboardStore
+	 */
 	public function getStore() : ScoreboardStore{
 		return $this->scoreboardStore;
 	}
 
+	/**
+	 * @return $this
+	 */
 	public function getPlugin(){
 		return $this;
 	}
