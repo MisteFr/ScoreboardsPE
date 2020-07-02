@@ -102,6 +102,7 @@ class Scoreboard{
 	 */
 
 	public function setLine(int $line, string $message, bool $padding = true) : void{
+		$pk = new SetScorePacket();
 		if(!$this->plugin->getStore()->entryExist($this->objectiveName, ($line - 1)) && $line !== 1){
 			for($i = 1; $i <= ($line - 1); $i++){
 				if(!$this->plugin->getStore()->entryExist($this->objectiveName, ($i - 1))){
@@ -129,7 +130,6 @@ class Scoreboard{
 		foreach($this->plugin->getStore()->getViewers($this->objectiveName) as $name){
 			$p = $this->plugin->getServer()->getPlayer($name);
 			if($p !== null){
-				$pk = new SetScorePacket();
 				$pk->type = SetScorePacket::TYPE_CHANGE;
 				foreach($this->plugin->getStore()->getEntries($this->objectiveName) as $index => $entry){
 					$pk->entries[$index] = $entry;
