@@ -7,22 +7,22 @@ use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 class ScoreboardStore{
 
 	/** @var array */
-	private $entries;
+	private $entries = [];
 
 	/** @var array */
-	private $scoreboards;
+	private $scoreboards = [];
 
 	/** @var array */
-	private $displaySlots;
+	private $displaySlots = [];
 
 	/** @var array */
-	private $sortOrders;
+	private $sortOrders = [];
 
 	/** @var array */
-	private $ids;
+	private $ids = [];
 
 	/** @var array */
-	private $viewers;
+	private $viewers = [];
 
 	/**
 	 * @param string           $objectiveName
